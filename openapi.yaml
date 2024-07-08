@@ -5,13 +5,13 @@ info:
   description: |
     This specification represents early but ongoing design work for a next-generation, RESTful Juju
     client API. It **should not** be used as reference for any currently released version of Juju,
-    and is unlikely to be implemented until some time in 2024.
+    and is unlikely to be implemented until some time in 2025.
 
     The source code for this page, and the OpenAPI specification can be found on
-    [Github](https://github.com/jnsgruk/juju-api). You can also find a progress tracker that
+    [Github](https://github.com/jameinel/juju-api). You can also find a progress tracker that
     indicates which of the prior facade calls have been covered by this design.
 
-    The [OpenAPI Spec](https://github.com/jnsgruk/juju-api/blob/main/openapi.yaml) can be entered
+    The [OpenAPI Spec](https://github.com/jameinel/juju-api/blob/main/openapi.yaml) can be entered
     directly into the [Swagger Editor](https://editor-next.swagger.io/) for a slightly different
     experience when exploring the API if preferable.
 
@@ -187,6 +187,7 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
   /integrate:
+    # TODO (jam) 2024-05-10: This is put as a top level, because you may need to cross model integrate, which pushes the source and dest models into the args. Juju the CLI defaults to assuming one of those as context
     post:
       tags:
         - application
@@ -1555,6 +1556,8 @@ components:
     IntegrateArgs:
       type: object
       properties:
+        # TODO(jam) 2024-05-10: This probably shouldn't be 'provider/requirer'. We might make it src/dest
+        #  but I don't think we want to require that API clients must know the details of the charms
         provider:
           $ref: "#/components/schemas/Integrator"
         requirer:
@@ -1574,6 +1577,8 @@ components:
         endpoint:
           type: string
       required:
+        # TODO(jam) 2024-05-10: We need 'model' for cross model integrations, but if we supported 'models/{model}/integrate' then we could infer the model target,
+        #  especially in the case of normal integrations, which would simplify common workflows
         - model
         - application
     MachineHardware:
@@ -1607,9 +1612,9 @@ components:
         owner:
           description: Identifier of the model's owner.
           type: string
-        # TODO: Should this be an enum?
         type:
           type: string
+          enum: [caas, iaas]
         uuid:
           type: string
         agent-version:
