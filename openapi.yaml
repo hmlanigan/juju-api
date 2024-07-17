@@ -2051,7 +2051,7 @@ components:
         revisions:
           type: array
           items:
-            - $ref: "#/components/schemas/SecretRevision"
+            $ref: "#/components/schemas/SecretRevision"
         rotate-policy:
           type: string
           enum:
@@ -2098,7 +2098,7 @@ components:
         name:
           type: string
         num-secrets:
-          type: int
+          type: integer
         token-rotate-interval:
           type: integer
       additionalProperties: false
@@ -2140,7 +2140,7 @@ components:
           type: string
           format: date-time
         revision:
-          type: int
+          type: integer
         updated-at:
           type: string
           format: date-time
