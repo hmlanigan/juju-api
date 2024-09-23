@@ -476,7 +476,7 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
   # TODO: Should this just be at PATCH /models/{model}/apps/{app}?
-  /models/{model}/apps/{app}/refresh:
+  /models/{model}/apps/{app}:refresh:
     patch:
       tags:
         - application
