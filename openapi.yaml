@@ -333,7 +333,7 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
-  /models/{model}:
+  /models/{namespace}/{model}:
     get:
       tags:
         - model
@@ -401,7 +401,7 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
-  /models/{model}/apps/{app}:
+  /models/{namespace}/{model}/apps/{app}:
     get:
       tags:
         - application
@@ -476,7 +476,7 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
   # TODO: Should this just be at PATCH /models/{model}/apps/{app}?
-  /models/{model}/apps/{app}:refresh:
+  /models/{namespace}/{model}/apps/{app}:refresh:
     patch:
       tags:
         - application
@@ -535,7 +535,7 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
-  /models/{model}/apps/{app}/scale:
+  /models/{namespace}/{model}/apps/{app}/scale:
     patch:
       tags:
         - application
@@ -565,7 +565,7 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
-  /models/{model}/deploy:
+  /models/{namespace}/{model}/deploy:
     post:
       tags:
         - application
@@ -600,7 +600,7 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
-  /models/{model}/status:
+  /models/{namespace}/{model}/status:
     get:
       tags:
         - model
@@ -1577,7 +1577,7 @@ components:
         endpoint:
           type: string
       required:
-        # TODO(jam) 2024-05-10: We need 'model' for cross model integrations, but if we supported 'models/{model}/integrate' then we could infer the model target,
+        # TODO(jam) 2024-05-10: We need 'model' for cross model integrations, but if we supported 'models/{namespace}/{model}/integrate' then we could infer the model target,
         #  especially in the case of normal integrations, which would simplify common workflows
         - model
         - application
