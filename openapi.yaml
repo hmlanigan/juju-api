@@ -49,6 +49,11 @@ tags:
     externalDocs:
       description: Find out more about Juju models.
       url: https://juju.is/docs/olm/manage-models
+  - name: namespace
+    description: The collective namespace that the Model exists in
+    externalDocs:
+      description: Find out more about Juju models.
+      url: https://juju.is/docs/olm/manage-models
   - name: secret
     description: Manage Juju secrets
     externalDocs:
@@ -333,177 +338,6 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
-  /models/{namespace}/{model}:
-    get:
-      tags:
-        - model
-      summary: Get a specific model.
-      description: Returns detailed information about a given model.
-      operationId: getModel
-      parameters:
-        - $ref: "#/components/parameters/Model"
-      responses:
-        "200":
-          description: Detailed information about the requested model.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ModelDetail"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
-    delete:
-      tags:
-        - model
-      summary: Delete a model.
-      description: Delete a model from the controller.
-      operationId: deleteModel
-      parameters:
-        - $ref: "#/components/parameters/Model"
-        - $ref: "#/components/parameters/DestroyStorage"
-        - $ref: "#/components/parameters/Force"
-        - $ref: "#/components/parameters/MaxWait"
-        - $ref: "#/components/parameters/Timeout"
-      responses:
-        "200":
-          $ref: "#/components/responses/EmptySyncResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
-    patch:
-      tags:
-        - model
-      summary: Update the model.
-      description: |
-        Update various attributes of the model including user access, config and credentials.
-      operationId: updateModel
-      parameters:
-        - $ref: "#/components/parameters/Model"
-      requestBody:
-        description: An object describing the changes to model.
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ModelUpdate"
-        required: true
-      responses:
-        "200":
-          $ref: "#/components/responses/EmptySyncResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
-  /models/{namespace}/{model}/apps/{app}:
-    get:
-      tags:
-        - application
-      summary: Get information about an application.
-      description: |
-        Get detailed information about a specific application that's deployed within the model.
-      operationId: getApplication
-      parameters:
-        - $ref: "#/components/parameters/Model"
-        - $ref: "#/components/parameters/Application"
-      responses:
-        "200":
-          description: Detailed information about the requested application.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Application"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
-    patch:
-      tags:
-        - application
-      summary: Update the application.
-      description: |
-        Update various attributes of the application including config, constraints, exposure, etc.
-
-        To unset an application config or constraint, it's value should be set to 'null'.
-      operationId: updateApplication
-      parameters:
-        - $ref: "#/components/parameters/Model"
-        - $ref: "#/components/parameters/Application"
-      requestBody:
-        description: An object describing the changes to the application.
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ApplicationUpdate"
-        required: true
-      responses:
-        "200":
-          $ref: "#/components/responses/EmptySyncResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
-    delete:
-      tags:
-        - application
-      summary: Remote an application.
-      description: Removes the given application from the model.
-      operationId: deleteApplication
-      parameters:
-        - $ref: "#/components/parameters/Model"
-        - $ref: "#/components/parameters/Application"
-        - $ref: "#/components/parameters/DestroyStorage"
-        - $ref: "#/components/parameters/Force"
-        - $ref: "#/components/parameters/MaxWait"
-        - $ref: "#/components/parameters/DryRun"
-      responses:
-        "200":
-          $ref: "#/components/responses/EmptySyncResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
-  # TODO: Should this just be at PATCH /models/{model}/apps/{app}?
-  /models/{namespace}/{model}/apps/{app}:refresh:
-    patch:
-      tags:
-        - application
-      summary: Refresh the charm for an application.
-      description: |
-        Refresh an application to a given charm, revision or track.
-      operationId: refreshApplication
-      parameters:
-        - $ref: "#/components/parameters/Model"
-        - $ref: "#/components/parameters/Application"
-        - $ref: "#/components/parameters/Force"
-        - $ref: "#/components/parameters/DryRun"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ApplicationRefresh"
-        required: true
-      responses:
-        "200":
-          $ref: "#/components/responses/EmptySyncResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
   /models/{model}/apps/{app}/resources/{resource}:
     post:
       tags:
@@ -535,6 +369,154 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
+  /models/{namespace}/{model}:
+    get:
+      tags:
+        - model
+      summary: Get a specific model.
+      description: Returns detailed information about a given model.
+      operationId: getModel
+      parameters:
+        - $ref: "#/components/parameters/Namespace"
+        - $ref: "#/components/parameters/Model"
+      responses:
+        "200":
+          description: Detailed information about the requested model.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModelDetail"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    delete:
+      tags:
+        - model
+      summary: Delete a model.
+      description: Delete a model from the controller.
+      operationId: deleteModel
+      parameters:
+        - $ref: "#/components/parameters/Namespace"
+        - $ref: "#/components/parameters/Model"
+        - $ref: "#/components/parameters/DestroyStorage"
+        - $ref: "#/components/parameters/Force"
+        - $ref: "#/components/parameters/MaxWait"
+        - $ref: "#/components/parameters/Timeout"
+      responses:
+        "200":
+          $ref: "#/components/responses/EmptySyncResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    patch:
+      tags:
+        - model
+      summary: Update the model.
+      description: |
+        Update various attributes of the model including user access, config and credentials.
+      operationId: updateModel
+      parameters:
+        - $ref: "#/components/parameters/Namespace"
+        - $ref: "#/components/parameters/Model"
+      requestBody:
+        description: An object describing the changes to model.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ModelUpdate"
+        required: true
+      responses:
+        "200":
+          $ref: "#/components/responses/EmptySyncResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /models/{namespace}/{model}/apps/{app}:
+    get:
+      tags:
+        - application
+      summary: Get information about an application.
+      description: |
+        Get detailed information about a specific application that's deployed within the model.
+      operationId: getApplication
+      parameters:
+        - $ref: "#/components/parameters/Namespace"
+        - $ref: "#/components/parameters/Model"
+        - $ref: "#/components/parameters/Application"
+      responses:
+        "200":
+          description: Detailed information about the requested application.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    patch:
+      tags:
+        - application
+      summary: Update the application.
+      description: |
+        Update various attributes of the application including config, constraints, exposure, etc.
+
+        To unset an application config or constraint, it's value should be set to 'null'.
+      operationId: updateApplication
+      parameters:
+        - $ref: "#/components/parameters/Namespace"
+        - $ref: "#/components/parameters/Model"
+        - $ref: "#/components/parameters/Application"
+      requestBody:
+        description: An object describing the changes to the application.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationUpdate"
+        required: true
+      responses:
+        "200":
+          $ref: "#/components/responses/EmptySyncResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    delete:
+      tags:
+        - application
+      summary: Remote an application.
+      description: Removes the given application from the model.
+      operationId: deleteApplication
+      parameters:
+        - $ref: "#/components/parameters/Namespace"
+        - $ref: "#/components/parameters/Model"
+        - $ref: "#/components/parameters/Application"
+        - $ref: "#/components/parameters/DestroyStorage"
+        - $ref: "#/components/parameters/Force"
+        - $ref: "#/components/parameters/MaxWait"
+        - $ref: "#/components/parameters/DryRun"
+      responses:
+        "200":
+          $ref: "#/components/responses/EmptySyncResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /models/{namespace}/{model}/apps/{app}/scale:
     patch:
       tags:
@@ -544,6 +526,7 @@ paths:
         Scale an application up or down.
       operationId: scaleApplication
       parameters:
+        - $ref: "#/components/parameters/Namespace"
         - $ref: "#/components/parameters/Model"
         - $ref: "#/components/parameters/Application"
           # The following are applicable only when scaling an application down
@@ -555,6 +538,36 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/ApplicationScale"
+        required: true
+      responses:
+        "200":
+          $ref: "#/components/responses/EmptySyncResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  # TODO: Should this just be at PATCH /models/{model}/apps/{app}?
+  /models/{namespace}/{model}/apps/{app}:refresh:
+    patch:
+      tags:
+        - application
+      summary: Refresh the charm for an application.
+      description: |
+        Refresh an application to a given charm, revision or track.
+      operationId: refreshApplication
+      parameters:
+        - $ref: "#/components/parameters/Namespace"
+        - $ref: "#/components/parameters/Model"
+        - $ref: "#/components/parameters/Application"
+        - $ref: "#/components/parameters/Force"
+        - $ref: "#/components/parameters/DryRun"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationRefresh"
         required: true
       responses:
         "200":
@@ -582,6 +595,7 @@ paths:
         operation).
       operationId: deploy
       parameters:
+        - $ref: "#/components/parameters/Namespace"
         - $ref: "#/components/parameters/Model"
         - $ref: "#/components/parameters/Force"
         - $ref: "#/components/parameters/DryRun"
@@ -609,6 +623,7 @@ paths:
         Returns status information about a model, such as applications deployed and machines.
       operationId: getModelStatus
       parameters:
+        - $ref: "#/components/parameters/Namespace"
         - $ref: "#/components/parameters/Model"
       responses:
         "200":
@@ -2473,6 +2488,13 @@ components:
       name: model
       required: true
       description: The name of a model in the controller.
+      schema:
+        type: string
+    Namespace:
+      in: path
+      name: namespace
+      required: true
+      description: The namespace that the model exists in. Frequently this is a username
       schema:
         type: string
     ReloadSpaces:
