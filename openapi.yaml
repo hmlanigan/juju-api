@@ -191,29 +191,6 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
-  /integrate:
-    # TODO (jam) 2024-05-10: This is put as a top level, because you may need to cross model integrate, which pushes the source and dest models into the args. Juju the CLI defaults to assuming one of those as context
-    post:
-      tags:
-        - application
-      summary: Integrate two applications.
-      description: Integrates applications using specified endpoints and returns the relation info.
-      operationId: integrate
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/IntegrateArgs"
-        required: true
-      responses:
-        "201":
-          $ref: "#/components/responses/EntityCreated"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
   /model-defaults:
     get:
       tags:
@@ -328,37 +305,6 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/ModelCreateArgs"
-        required: true
-      responses:
-        "201":
-          $ref: "#/components/responses/EntityCreated"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
-  /models/{model}/apps/{app}/resources/{resource}:
-    post:
-      tags:
-        - application
-      summary: Upload a resource for an application.
-      description: |
-        Upload a resource for a specific application.
-
-        If a resource is required at deploy time, the resource IDs required can be found by
-        GETing the model and looking for the `resources` field, and any resource that have the
-        property `pending-upload` set to `true`.
-      operationId: uploadResource
-      parameters:
-        - $ref: "#/components/parameters/Model"
-        - $ref: "#/components/parameters/Application"
-        - $ref: "#/components/parameters/Resource"
-        - $ref: "#/components/parameters/Force"
-        - $ref: "#/components/parameters/DryRun"
-      requestBody:
-        content:
-          application/octet-stream: {}
         required: true
       responses:
         "201":
@@ -517,6 +463,38 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
+  /models/{namespace}/{model}/apps/{app}/resources/{resource}:
+    post:
+      tags:
+        - application
+      summary: Upload a resource for an application.
+      description: |
+        Upload a resource for a specific application.
+
+        If a resource is required at deploy time, the resource IDs required can be found by
+        GETing the model and looking for the `resources` field, and any resource that have the
+        property `pending-upload` set to `true`.
+      operationId: uploadResource
+      parameters:
+        - $ref: "#/components/parameters/Namespace"
+        - $ref: "#/components/parameters/Model"
+        - $ref: "#/components/parameters/Application"
+        - $ref: "#/components/parameters/Resource"
+        - $ref: "#/components/parameters/Force"
+        - $ref: "#/components/parameters/DryRun"
+      requestBody:
+        content:
+          application/octet-stream: {}
+        required: true
+      responses:
+        "201":
+          $ref: "#/components/responses/EntityCreated"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /models/{namespace}/{model}/apps/{app}/scale:
     patch:
       tags:
@@ -632,6 +610,36 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ModelStatus"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /models/{namespace}/{model}:integrate:
+    # TODO (jam) 2024-05-10: This is put as a top level, because you may need
+    # to cross model integrate, which pushes the source and dest models into
+    # the args. Juju the CLI defaults to assuming one of those as context Given
+    # that you can remove relation/integration, should this be a Resource,
+    # rather than an action?
+    post:
+      tags:
+        - application
+      summary: Integrate two applications.
+      description: Integrates applications using specified endpoints and returns the relation info.
+      operationId: integrate
+      parameters:
+        - $ref: "#/components/parameters/Namespace"
+        - $ref: "#/components/parameters/Model"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IntegrateArgs"
+        required: true
+      responses:
+        "201":
+          $ref: "#/components/responses/EntityCreated"
         "400":
           $ref: "#/components/responses/BadRequest"
         "403":
@@ -1592,9 +1600,6 @@ components:
         endpoint:
           type: string
       required:
-        # TODO(jam) 2024-05-10: We need 'model' for cross model integrations, but if we supported 'models/{namespace}/{model}/integrate' then we could infer the model target,
-        #  especially in the case of normal integrations, which would simplify common workflows
-        - model
         - application
     MachineHardware:
       type: object
