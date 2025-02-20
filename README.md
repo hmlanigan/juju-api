@@ -73,9 +73,9 @@ This table tracks progress through the redesign of the Juju client API:
 | Application          | CharmConfig                     | `GET /models/{namespace}/{model}/apps/{app}`                    |
 | Application          | CharmRelations                  |                                                                 |
 | Application          | Consume                         |                                                                 |
-| Application          | Deploy                          | `POST /models/{model}/deploy`                                   |
-| Application          | DeployFromRepository            | `POST /models/{model}/deploy`                                   |
-| Application          | DestroyApplication              | `DELETE /models/{model}/apps/{app}`                             |
+| Application          | Deploy                          | `POST /models/{namespace}/{model}/deploy`                       |
+| Application          | DeployFromRepository            | `POST /models/{namespace}/{model}/deploy`                       |
+| Application          | DestroyApplication              | `DELETE /models/{namespace}/{model}/apps/{app}`                 |
 | Application          | DestroyConsumedApplications     |                                                                 |
 | Application          | DestroyRelation                 | `DELETE /models/{namespace}/{model}/integrations/{integration}` |
 | Application          | DestroyUnit                     | `PATCH /models/{namespace}/{model}/apps/{app}/scale`            |
@@ -86,16 +86,16 @@ This table tracks progress through the redesign of the Juju client API:
 | Application          | Leader                          |                                                                 |
 | Application          | MergeBindings                   |                                                                 |
 | Application          | ResolveUnitErrors               |                                                                 |
-| Application          | ScaleApplications               | `PATCH /models/{model}/apps/{app}/scale`                        |
-| Application          | SetCharm                        | `PATCH /models/{model}/apps/{app}/refresh`                      |
-| Application          | SetConfigs                      | `PATCH /models/{model}/apps/{app}`                              |
-| Application          | SetConstraints                  | `PATCH /models/{model}/apps/{app}`                              |
+| Application          | ScaleApplications               | `PATCH /models/{namespace}/{model}/apps/{app}/scale`            |
+| Application          | SetCharm                        | `PATCH /models/{namespace}/{model}/apps/{app}/refresh`          |
+| Application          | SetConfigs                      | `PATCH /models/{namespace}/{model}/apps/{app}`                  |
+| Application          | SetConstraints                  | `PATCH /models/{namespace}/{model}/apps/{app}`                  |
 | Application          | SetMetricCredentials            |                                                                 |
 | Application          | SetRelationsSuspended           |                                                                 |
-| Application          | Unexpose                        | `PATCH /models/{model}/apps/{app}`                              |
+| Application          | Unexpose                        | `PATCH /models/{namespace}/{model}/apps/{app}`                  |
 | Application          | UnitsInfo                       |                                                                 |
-| Application          | UnsetApplicationsConfig         | `PATCH /models/{model}/apps/{app}`                              |
-| Application          | UpdateApplicationBase           | `PATCH /models/{model}/apps/{app}/refresh`                      |
+| Application          | UnsetApplicationsConfig         | `PATCH /models/{namespace}/{model}/apps/{app}`                  |
+| Application          | UpdateApplicationBase           | `PATCH /models/{namespace}/{model}/apps/{app}/refresh`          |
 | ApplicationOffers    | ApplicationOffers               |                                                                 |
 | ApplicationOffers    | DestroyOffers                   |                                                                 |
 | ApplicationOffers    | FindApplicationOffers           |                                                                 |
@@ -184,13 +184,13 @@ This table tracks progress through the redesign of the Juju client API:
 | MachineManager       | WatchUpgradeSeriesNotifications |                                                                 |
 | MetricsDebug         | GetMetrics                      |                                                                 |
 | MetricsDebug         | SetMeterStatus                  |                                                                 |
-| ModelConfig          | GetModelConstraints             | `GET /models/{model}`                                           |
-| ModelConfig          | ModelGet                        | `GET /models/{model}`                                           |
-| ModelConfig          | ModelSet                        | `PATCH /models/{model}`                                         |
-| ModelConfig          | ModelUnset                      | `PATCH /models/{model}`                                         |
+| ModelConfig          | GetModelConstraints             | `GET /models/{namespace}/{model}`                               |
+| ModelConfig          | ModelGet                        | `GET /models/{namespace}/{model}`                               |
+| ModelConfig          | ModelSet                        | `PATCH /models/{namespace}/{model}`                             |
+| ModelConfig          | ModelUnset                      | `PATCH /models/{namespace}/{model}`                             |
 | ModelConfig          | SLALevel                        | N/A                                                             |
 | ModelConfig          | Sequences                       |                                                                 |
-| ModelConfig          | SetModelConstraints             | `PATCH /models/{model}`                                         |
+| ModelConfig          | SetModelConstraints             | `PATCH /models/{namespace}/{model}`                             |
 | ModelConfig          | SetSLALevel                     | N/A                                                             |
 | ModelGeneration      | AbortBranch                     |                                                                 |
 | ModelGeneration      | AddBranch                       |                                                                 |
@@ -200,17 +200,17 @@ This table tracks progress through the redesign of the Juju client API:
 | ModelGeneration      | ListCommits                     |                                                                 |
 | ModelGeneration      | ShowCommit                      |                                                                 |
 | ModelGeneration      | TrackBranch                     |                                                                 |
-| ModelManager         | ChangeModelCredential           | `PATCH /models/{model}`                                         |
+| ModelManager         | ChangeModelCredential           | `PATCH /models/{namespace}/{model}`                             |
 | ModelManager         | CreateModel                     | `POST /models`                                                  |
-| ModelManager         | DestroyModels                   | `DELETE /models/{model}`                                        |
+| ModelManager         | DestroyModels                   | `DELETE /models/{namespace}/{model}`                            |
 | ModelManager         | DumpModels                      | `GET /models?detailed=true&all=true`                            |
 | ModelManager         | DumpModelsDB                    | N/A                                                             |
 | ModelManager         | ListModelSummaries              | `GET /models?detailed=true`                                     |
 | ModelManager         | ListModels                      | `GET /models`                                                   |
 | ModelManager         | ModelDefaultsForClouds          | `GET /model-defaults`                                           |
-| ModelManager         | ModelInfo                       | `GET /models/{model}`                                           |
-| ModelManager         | ModelStatus                     | `GET /models/{model}/status`                                    |
-| ModelManager         | ModifyModelAccess               | `PATCH /models/{model}`                                         |
+| ModelManager         | ModelInfo                       | `GET /models/{namespace}/{model}`                               |
+| ModelManager         | ModelStatus                     | `GET /models/{namespace}/{model}/status`                        |
+| ModelManager         | ModifyModelAccess               | `PATCH /models/{namespace}/{model}`                             |
 | ModelManager         | SetModelDefaults                | `PATCH /model-defaults`                                         |
 | ModelManager         | UnsetModelDefaults              | `PATCH /model-defaults`                                         |
 | ModelUpgrader        | AbortModelUpgrade               |                                                                 |
