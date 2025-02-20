@@ -73,8 +73,8 @@ This table tracks progress through the redesign of the Juju client API:
 | Application          | CharmConfig                     | `GET /models/{namespace}/{model}/apps/{app}`                    |
 | Application          | CharmRelations                  |                                                                 |
 | Application          | Consume                         |                                                                 |
-| Application          | Deploy                          | `POST /models/{namespace}/{model}/deploy`                       |
-| Application          | DeployFromRepository            | `POST /models/{namespace}/{model}/deploy`                       |
+| Application          | Deploy                          | `POST /models/{namespace}/{model}/apps`                         |
+| Application          | DeployFromRepository            | `POST /models/{namespace}/{model}/apps`                         |
 | Application          | DestroyApplication              | `DELETE /models/{namespace}/{model}/apps/{app}`                 |
 | Application          | DestroyConsumedApplications     |                                                                 |
 | Application          | DestroyRelation                 | `DELETE /models/{namespace}/{model}/integrations/{integration}` |
@@ -95,7 +95,7 @@ This table tracks progress through the redesign of the Juju client API:
 | Application          | Unexpose                        | `PATCH /models/{namespace}/{model}/apps/{app}`                  |
 | Application          | UnitsInfo                       |                                                                 |
 | Application          | UnsetApplicationsConfig         | `PATCH /models/{namespace}/{model}/apps/{app}`                  |
-| Application          | UpdateApplicationBase           | `PATCH /models/{namespace}/{model}/apps/{app}/refresh`          |
+| Application          | UpdateApplicationBase           | `PATCH /models/{namespace}/{model}/apps/{app}:refresh`          |
 | ApplicationOffers    | ApplicationOffers               |                                                                 |
 | ApplicationOffers    | DestroyOffers                   |                                                                 |
 | ApplicationOffers    | FindApplicationOffers           |                                                                 |

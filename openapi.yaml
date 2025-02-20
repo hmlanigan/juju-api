@@ -386,6 +386,42 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
+  /models/{namespace}/{model}/apps:
+    post:
+      tags:
+        - application
+      summary: Deploy an application into the model.
+      description: |
+        Deploy an application into the model.
+
+        Returns a simple response with a location header pointing to the deployed
+        application.
+
+        If the deployment relies upon local resources being uploaded, clients should
+        retrieve the URL in the location header send in the response in order to
+        learn the URL resources should be POSTed too after deploy (see `uploadResource`
+        operation).
+      operationId: deploy
+      parameters:
+        - $ref: "#/components/parameters/Namespace"
+        - $ref: "#/components/parameters/Model"
+        - $ref: "#/components/parameters/Force"
+        - $ref: "#/components/parameters/DryRun"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeployArgs"
+        required: true
+      responses:
+        "201":
+          $ref: "#/components/responses/EntityCreated"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /models/{namespace}/{model}/apps/{app}:
     get:
       tags:
@@ -495,37 +531,6 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
-  /models/{namespace}/{model}/apps/{app}/scale:
-    patch:
-      tags:
-        - application
-      summary: Scale an application.
-      description: |
-        Scale an application up or down.
-      operationId: scaleApplication
-      parameters:
-        - $ref: "#/components/parameters/Namespace"
-        - $ref: "#/components/parameters/Model"
-        - $ref: "#/components/parameters/Application"
-          # The following are applicable only when scaling an application down
-        - $ref: "#/components/parameters/DestroyStorage"
-        - $ref: "#/components/parameters/Force"
-        - $ref: "#/components/parameters/MaxWait"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ApplicationScale"
-        required: true
-      responses:
-        "200":
-          $ref: "#/components/responses/EmptySyncResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
   # TODO: Should this just be at PATCH /models/{model}/apps/{app}?
   /models/{namespace}/{model}/apps/{app}:refresh:
     patch:
@@ -556,36 +561,31 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
-  /models/{namespace}/{model}/deploy:
-    post:
+  /models/{namespace}/{model}/apps/{app}:scale:
+    patch:
       tags:
         - application
-      summary: Deploy an application into the model.
+      summary: Scale an application.
       description: |
-        Deploy an application into the model.
-
-        Returns a simple response with a location header pointing to the deployed
-        application.
-
-        If the deployment relies upon local resources being uploaded, clients should
-        retrieve the URL in the location header send in the response in order to
-        learn the URL resources should be POSTed too after deploy (see `uploadResource`
-        operation).
-      operationId: deploy
+        Scale an application up or down.
+      operationId: scaleApplication
       parameters:
         - $ref: "#/components/parameters/Namespace"
         - $ref: "#/components/parameters/Model"
+        - $ref: "#/components/parameters/Application"
+          # The following are applicable only when scaling an application down
+        - $ref: "#/components/parameters/DestroyStorage"
         - $ref: "#/components/parameters/Force"
-        - $ref: "#/components/parameters/DryRun"
+        - $ref: "#/components/parameters/MaxWait"
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/DeployArgs"
+              $ref: "#/components/schemas/ApplicationScale"
         required: true
       responses:
-        "201":
-          $ref: "#/components/responses/EntityCreated"
+        "200":
+          $ref: "#/components/responses/EmptySyncResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
         "403":
