@@ -592,6 +592,53 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
+  /models/{namespace}/{model}/integrations:
+    post:
+      tags:
+        - application
+      summary: Integrate two applications.
+      description: Integrates applications using specified endpoints and returns the integration info.
+      operationId: integrate
+      parameters:
+        - $ref: "#/components/parameters/Namespace"
+        - $ref: "#/components/parameters/Model"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IntegrateArgs"
+        required: true
+      responses:
+        "201":
+          $ref: "#/components/responses/EntityCreated"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /models/{namespace}/{model}/integrations/{integration}:
+    # TODO: jam 2025-02-20 There should almost definitely be a GET possible for
+    # an integration, plausibly to get you the current content of that relation
+    delete:
+      tags:
+        - application
+      summary: Remove the integration between two applications.
+      description: The integration between two applications can be dissolved by removing this entity.
+      operationId: deleteIntegration
+      parameters:
+        - $ref: "#/components/parameters/Namespace"
+        - $ref: "#/components/parameters/Model"
+        - $ref: "#/components/parameters/Integration"
+      responses:
+        "200":
+          $ref: "#/components/responses/EmptySyncResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /models/{namespace}/{model}/status:
     get:
       tags:
@@ -610,36 +657,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ModelStatus"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
-  /models/{namespace}/{model}:integrate:
-    # TODO (jam) 2024-05-10: This is put as a top level, because you may need
-    # to cross model integrate, which pushes the source and dest models into
-    # the args. Juju the CLI defaults to assuming one of those as context Given
-    # that you can remove relation/integration, should this be a Resource,
-    # rather than an action?
-    post:
-      tags:
-        - application
-      summary: Integrate two applications.
-      description: Integrates applications using specified endpoints and returns the relation info.
-      operationId: integrate
-      parameters:
-        - $ref: "#/components/parameters/Namespace"
-        - $ref: "#/components/parameters/Model"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/IntegrateArgs"
-        required: true
-      responses:
-        "201":
-          $ref: "#/components/responses/EntityCreated"
         "400":
           $ref: "#/components/responses/BadRequest"
         "403":
@@ -2482,6 +2499,13 @@ components:
       schema:
         type: boolean
         default: false
+    Integration:
+      in: path
+      name: integration
+      required: true
+      schema:
+        # TODO: jam 2025-02-20 should this be an opaque string instead?
+        type: integer
     MaxWait:
       in: query
       name: max-wait
