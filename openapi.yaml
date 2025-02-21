@@ -39,6 +39,8 @@ tags:
     externalDocs:
       description: Find out more about Juju applications.
       url: https://juju.is/docs/olm/manage-applications
+  - name: charms
+    description: Manage Juju charm contents
   - name: cloud
     description: Manage Juju clouds
     externalDocs:
@@ -46,11 +48,6 @@ tags:
       url: https://juju.is/docs/olm/manage-clouds
   - name: model
     description: Manage Juju models
-    externalDocs:
-      description: Find out more about Juju models.
-      url: https://juju.is/docs/olm/manage-models
-  - name: namespace
-    description: The collective namespace that the Model exists in
     externalDocs:
       description: Find out more about Juju models.
       url: https://juju.is/docs/olm/manage-models
@@ -397,10 +394,9 @@ paths:
         Returns a simple response with a location header pointing to the deployed
         application.
 
-        If the deployment relies upon local resources being uploaded, clients should
-        retrieve the URL in the location header send in the response in order to
-        learn the URL resources should be POSTed too after deploy (see `uploadResource`
-        operation).
+        To deploy a local charm, first upload charms and resources, getting
+        references to them, which can then be supplied when creating an
+        application.
       operationId: deploy
       parameters:
         - $ref: "#/components/parameters/Namespace"
@@ -586,6 +582,105 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/EmptySyncResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /models/{namespace}/{model}/charms:
+    post:
+      tags:
+        - charms
+      summary: Upload a charm blob to the juju controller so that you can later deploy the charm
+      description: |
+        Record a local charm with the controller.
+
+        To deploy a local charm, first upload charms and resources, getting
+        references to them, which can then be supplied when creating an
+        application.
+      operationId: uploadCharm
+      parameters:
+        - $ref: "#/components/parameters/Namespace"
+        - $ref: "#/components/parameters/Model"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                # TODO: jam 2025-02-20 these are rough approximations of the information we pull out of a Charm PUT request
+                charmName:
+                  type: string
+                sha256:
+                  type: string
+                # TODO: jam 2025-02-20 We currently pull a lot of information
+                #  from the charm URL (Juju-Curl), we take a 7-byte 'short sha'
+                #  from the name, and then pop off the charm's revision from the
+                #  URL, as well as the origin (local vs charmhub). This all feels like
+                #  we should just make it clear fields as part of a multi-part POST
+                charmURL:
+                  type: string
+              # $ref: "#/components/schema/Charm"
+          application/zip:
+            schema:
+                type: string
+                format: binary
+        required: true
+      responses:
+        "201":
+          $ref: "#/components/responses/EntityCreated"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /models/{namespace}/{model}/charms/{charmname}:
+      tags:
+        - charms
+      summary: Upload a charm blob to the juju controller so that you can later deploy the charm
+      description: |
+        Download the content of an uploaded charm
+      operationId: uploadCharm
+      parameters:
+        - $ref: "#/components/parameters/Namespace"
+        - $ref: "#/components/parameters/Model"
+        - $ref: "#/components/parameters/CharmName"
+      responses:
+        "201":
+          $ref: "#/components/responses/EntityCreated"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /models/{namespace}/{model}/charms/{charm}/resources:
+    post:
+      tags:
+        - charms
+      summary: Upload a charm blob to the juju controller so that you can later deploy the charm
+      description: |
+        Record a local charm with the controller.
+
+        To deploy a local charm, first upload charms and resources, getting
+        references to them, which can then be supplied when creating an
+        application.
+      operationId: uploadCharm
+      parameters:
+        - $ref: "#/components/parameters/Namespace"
+        - $ref: "#/components/parameters/Model"
+      requestBody:
+        content:
+          application/zip:
+            schema:
+                type: string
+                format: binary
+        required: true
+      responses:
+        "201":
+          $ref: "#/components/responses/EntityCreated"
         "400":
           $ref: "#/components/responses/BadRequest"
         "403":
@@ -2469,6 +2564,13 @@ components:
       name: cloud
       required: true
       description: The name of a cloud in the controller.
+      schema:
+        type: string
+    CharmName:
+      in: path
+      name: charm-name
+      required: true
+      description: The name of the Charm.
       schema:
         type: string
     DestroyStorage:
