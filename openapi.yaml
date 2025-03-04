@@ -621,11 +621,11 @@ paths:
                 #  we should just make it clear fields as part of a multi-part POST
                 charmURL:
                   type: string
-              # $ref: "#/components/schema/Charm"
+                  # $ref: "#/components/schema/Charm"
           application/zip:
             schema:
-                type: string
-                format: binary
+              type: string
+              format: binary
         required: true
       responses:
         "201":
@@ -636,13 +636,15 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
-  /models/{namespace}/{model}/charms/{charmname}:
+  /models/{namespace}/{model}/charms/{charm-name}:
+    # TODO: jam 2025-03-04 this needs a revision of some sort, to disambiguate revisions of the charm over time
+    get:
       tags:
         - charms
       summary: Upload a charm blob to the juju controller so that you can later deploy the charm
       description: |
         Download the content of an uploaded charm
-      operationId: uploadCharm
+      operationId: downloadCharm
       parameters:
         - $ref: "#/components/parameters/Namespace"
         - $ref: "#/components/parameters/Model"
@@ -656,7 +658,8 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
-  /models/{namespace}/{model}/charms/{charm}/resources:
+  /models/{namespace}/{model}/charms/{charm-name}/resources:
+    # TODO: jam 2025-03-04 this needs a revision of some sort, to disambiguate revisions of the resources over time
     post:
       tags:
         - charms
@@ -667,16 +670,17 @@ paths:
         To deploy a local charm, first upload charms and resources, getting
         references to them, which can then be supplied when creating an
         application.
-      operationId: uploadCharm
+      operationId: charmResources
       parameters:
         - $ref: "#/components/parameters/Namespace"
         - $ref: "#/components/parameters/Model"
+        - $ref: "#/components/parameters/CharmName"
       requestBody:
         content:
           application/zip:
             schema:
-                type: string
-                format: binary
+              type: string
+              format: binary
         required: true
       responses:
         "201":
@@ -2559,18 +2563,18 @@ components:
         type: array
         items:
           type: string
-    Cloud:
-      in: path
-      name: cloud
-      required: true
-      description: The name of a cloud in the controller.
-      schema:
-        type: string
     CharmName:
       in: path
       name: charm-name
       required: true
       description: The name of the Charm.
+      schema:
+        type: string
+    Cloud:
+      in: path
+      name: cloud
+      required: true
+      description: The name of a cloud in the controller.
       schema:
         type: string
     DestroyStorage:
