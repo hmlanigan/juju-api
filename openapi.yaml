@@ -738,6 +738,32 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
+  /models/{namespace}/{model}/machines:
+    get:
+      tags:
+        - model
+      summary: Get a listing of all the machines in a model
+      description: |
+        Returns just the information about what machines exist in this model.
+        Likely a minimal amount of information (equivalent for `juju machines`,
+        but not the detail that you could get with `juju show-machine X`)
+      operationId: getMachines
+      parameters:
+        - $ref: "#/components/parameters/Namespace"
+        - $ref: "#/components/parameters/Model"
+      responses:
+        "200":
+          description: Status information about the requested model.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MachineList"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /models/{namespace}/{model}/status:
     get:
       tags:
@@ -1738,6 +1764,11 @@ components:
             type: string
         virt-type:
           type: string
+      additionalProperties: false
+    MachineList:
+      type: array
+      items:
+        $ref: "#/components/schemas/ModelMachine"
       additionalProperties: false
     Model:
       description: Information about a given model.
