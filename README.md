@@ -172,8 +172,8 @@ This table tracks progress through the redesign of the Juju client API:
 | KeyManager           | DeleteKeys                      |                                                                 |
 | KeyManager           | ImportKeys                      |                                                                 |
 | KeyManager           | ListKeys                        |                                                                 |
-| MachineManager       | AddMachines                     |                                                                 |
-| MachineManager       | DestroyMachineWithParams        |                                                                 |
+| MachineManager       | AddMachines                     | `POST /models/{namespace}/{model}/machines`                     |
+| MachineManager       | DestroyMachineWithParams        | `DELETE /models/{namespace}/{model}/machines/{machine-id}`      |
 | MachineManager       | GetUpgradeSeriesMessages        |                                                                 |
 | MachineManager       | InstanceTypes                   |                                                                 |
 | MachineManager       | ProvisioningScript              |                                                                 |

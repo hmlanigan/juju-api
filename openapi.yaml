@@ -30,7 +30,7 @@ info:
   version: "1.0"
 externalDocs:
   description: Find out more about Juju.
-  url: http://juju.is/docs
+  url: https://juju.is/docs
 servers:
   - url: https://localhost:17777/api/v1
 tags:
@@ -46,6 +46,11 @@ tags:
     externalDocs:
       description: Find out more about Juju clouds.
       url: https://juju.is/docs/olm/manage-clouds
+  - name: machine
+    description: Manage Juju machines
+    externalDocs:
+      description: Find out more about Juju machines.
+      url: https://juju.is/docs/olm/manage-models
   - name: model
     description: Manage Juju models
     externalDocs:
@@ -753,11 +758,84 @@ paths:
         - $ref: "#/components/parameters/Model"
       responses:
         "200":
-          description: Status information about the requested model.
+          description: Status information about the requested machine.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/MachineList"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      tags:
+        - model
+      summary: Add a machine to the model.
+      description: |
+        Returns the machines' object including the machines' url.
+        Likely a minimal amount of information (equivalent to `juju add-machine`)
+      operationId: postMachines
+      parameters:
+        - $ref: "#/components/parameters/Namespace"
+        - $ref: "#/components/parameters/Model"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MachineCreateArgs"
+          required: true
+      responses:
+        "201":
+          $ref: "#/components/responses/EntityCreated"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /models/{namespace}/{model}/machines/{machine-id}:
+    get:
+      tags:
+        - machine
+      description: |
+        Returns details of the specified machine.
+      operationId: getMachine
+      parameters:
+        - $ref: "#/components/parameters/Namespace"
+        - $ref: "#/components/parameters/Model"
+        - $ref: "#/components/parameters/MachineID"
+      responses:
+        "200":
+          description: Details of the requested machine.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModelMachine"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    delete:
+      tags:
+        - machine
+      summary: Delete a machine.
+      description: |
+        Permanently removes a machine from the controller.
+      operationId: deleteMachine
+      parameters:
+        - $ref: "#/components/parameters/Namespace"
+        - $ref: "#/components/parameters/Model"
+        - $ref: "#/components/parameters/Force"
+        - $ref: "#/components/parameters/MachineID"
+        - $ref: "#/components/parameters/Wait"
+        - $ref: "#/components/parameters/KeepInstance"
+      responses:
+        "200":
+          $ref: "#/components/responses/EmptySyncResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
         "403":
@@ -1743,6 +1821,41 @@ components:
           type: string
       required:
         - application
+    MachineCreateArgs:
+      type: object
+      properties:
+        base:
+          $ref: "#/components/schemas/Base"
+        constraints:
+          $ref: "#/components/schemas/Constraints"
+        storage-constraints:
+          description: The credential to use when creating the new model.
+          type: string
+        placement:
+          description: The name of the new model.
+          type: string
+        parent-id:
+          description: Identifier of the owner of the new model.
+          type: string
+        container-type:
+          description: Identifier of the cloud region in which to create the model.
+          type: string
+        instance-id:
+          description: Identifier of the cloud region in which to create the model.
+          type: string
+        nonce:
+          description: Identifier of the cloud region in which to create the model.
+          type: string
+        addresses:
+          description: Identifier of the cloud region in which to create the model.
+          type: string
+        hardware-characteristics:
+          description: Identifier of the cloud region in which to create the model.
+          type: string
+      additionalProperties: false
+      required:
+        - name
+        - owner
     MachineHardware:
       type: object
       properties:
@@ -2643,6 +2756,20 @@ components:
       schema:
         # TODO: jam 2025-02-20 should this be an opaque string instead?
         type: integer
+    KeepInstance:
+      in: query
+      name: keep-instance
+      required: false
+      schema:
+        type: boolean
+        default: false
+    MachineID:
+      in: path
+      name: machine-id
+      required: true
+      description: The id of a machine in the model.
+      schema:
+        type: string
     MaxWait:
       in: query
       name: max-wait
@@ -2767,6 +2894,13 @@ components:
       description: Username of a user on the controller.
       schema:
         type: string
+    Wait:
+      in: query
+      name: wait
+      required: false
+      schema:
+        type: boolean
+        default: true
   responses:
     BadRequest:
       description: Bad request.
